@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 pub trait Operable {
     type Key: PartialEq + PartialOrd;
     type Val;
@@ -5,8 +7,11 @@ pub trait Operable {
     fn lookup(&self, key: &Self::Key) -> Option<&Self::Val>;
     fn insert(self, key: Self::Key, val: Self::Val) -> Self;
     fn remove(self, key: &Self::Key) -> Self;
+    fn map_dfs<F: Fn(Self::Val) -> Self::Val>(self, f: Rc<F>) -> Self;
+    fn map_bfs<F: Fn(Self::Val) -> Self::Val>(self, f: Rc<F>) -> Self;
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum BinaryTree<K, V> {
     Leaf,
     NonLeaf {
@@ -82,6 +87,37 @@ impl<K: PartialEq + PartialOrd, V> Operable for BinaryTree<K, V> {
                     NonLeaf { key: k, val, left: Box::new(left.remove(key)), right }
                 } else {
                     NonLeaf { key: k, val, left, right: Box::new(right.remove(key)) }
+                }
+            }
+        }
+    }
+
+    fn map_dfs<F: Fn(Self::Val) -> Self::Val>(self, f: Rc<F>) -> Self {
+        match self {
+            Leaf => self,
+            NonLeaf { key, val, left, right } => NonLeaf {
+                key,
+                val: f(val),
+                left: Box::new(left.map_dfs(f.clone())),
+                right: Box::new(right.map_dfs(f.clone()))
+            }
+        }
+    }
+
+    fn map_bfs<F: Fn(Self::Val) -> Self::Val>(self, q: [Self], f: Rc<F>) -> Self {
+        if q.len() == 0 && let NonLeaf { .. } = self {
+            q.push(self);
+        } else if let Leaf = self {
+            self
+        }
+
+        if q.len() > 0 {
+            let front = q.remove(0);
+            match front {
+                Leaf => front,
+                NonLeaf { key, val, left, right } => {
+                    q.push(left);
+                    q.push(right);
                 }
             }
         }
@@ -244,6 +280,82 @@ mod tests {
             right: Box::new(Leaf)
         };
 
-        assert_eq!(tree.remove(&4).lookup(&4), None);
+        assert_eq!(tree.clone().remove(&4), tree);
+    }
+
+    #[test]
+    fn double_tree_vals_with_map_dfs() {
+        let tree = NonLeaf {
+            key: 5,
+            val: 2,
+            left: Box::new(NonLeaf {
+                key: 1,
+                val: 3,
+                left: Box::new(Leaf),
+                right: Box::new(NonLeaf {
+                    key: 3,
+                    val: 4,
+                    left: Box::new(Leaf),
+                    right: Box::new(Leaf)
+                })
+            }),
+            right: Box::new(Leaf)
+        };
+        let expected = NonLeaf {
+            key: 5,
+            val: 4,
+            left: Box::new(NonLeaf {
+                key: 1,
+                val: 6,
+                left: Box::new(Leaf),
+                right: Box::new(NonLeaf {
+                    key: 3,
+                    val: 8,
+                    left: Box::new(Leaf),
+                    right: Box::new(Leaf)
+                })
+            }),
+            right: Box::new(Leaf)
+        };
+
+        assert_eq!(tree.map_dfs(Rc::new(|x| x*2)), expected);
+    }
+
+    #[test]
+    fn triple_tree_vals_with_map_bfs() {
+        let tree = NonLeaf {
+            key: 5,
+            val: 2,
+            left: Box::new(NonLeaf {
+                key: 1,
+                val: 3,
+                left: Box::new(Leaf),
+                right: Box::new(NonLeaf {
+                    key: 3,
+                    val: 4,
+                    left: Box::new(Leaf),
+                    right: Box::new(Leaf)
+                })
+            }),
+            right: Box::new(Leaf)
+        };
+        let expected = NonLeaf {
+            key: 5,
+            val: 6,
+            left: Box::new(NonLeaf {
+                key: 1,
+                val: 9,
+                left: Box::new(Leaf),
+                right: Box::new(NonLeaf {
+                    key: 3,
+                    val: 12,
+                    left: Box::new(Leaf),
+                    right: Box::new(Leaf)
+                })
+            }),
+            right: Box::new(Leaf)
+        };
+
+        assert_eq!(tree.map_bfs(Rc::new(|x| x*3)), expected);
     }
 }
