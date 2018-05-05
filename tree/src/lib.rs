@@ -104,7 +104,6 @@ impl<K: PartialEq + PartialOrd, V> Operable for BinaryTree<K, V> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
