@@ -29,75 +29,91 @@ table {
 } 
 /* end reset browser styles */
 
+html {
+  background-image: linear-gradient(to bottom, rgb(176,194,213), white 700px);
+  height: 100%;
+}
+
 .wrapper {
-	width: 960px;
-	margin-right: auto;
-	margin-left: auto;
-    overflow: hidden; /* contain float */
+  background-color: #fff;
+  background-image: url(images/bg_main.jpg);
+  background-position: top left;
+  background-repeat: no-repeat;
+  width: 960px;
+  margin-right: auto;
+  margin-left: auto;
+  overflow: hidden; /* contain float */
 }
 
 .main {
-	float: right;
-	width: 565px;
-	margin-right: 15px;
-	padding-top: 25px;
+  float: right;
+  width: 565px;
+  margin-right: 15px;
+  padding-top: 25px;
 }
 
 .announcement {
-	margin-right: 600px;
-	margin-left: 20px;
-	
+  background:
+    url(images/scroll_top.jpg) no-repeat top center,
+    url(images/scroll_bottom.jpg) no-repeat bottom center,
+    url(images/scroll_middle.jpg) repeat-y top center;
+  padding: 70px 0 60px 0;
+  margin: 115px 600px 0 20px;
 }
 
 .copyright {
-	clear: both;
-	font: bold 12px Tahoma, Geneva, sans-serif;
-	color: #65747E;
-	padding: 5px;
+  clear: both;
+  font: bold 12px Tahoma, Geneva, sans-serif;
+  color: #65747E;
+  padding: 5px;
   margin: 0 15px;
-	border: 1px dotted #98AFBE;
+  border: 1px dotted #98AFBE;
   border-left: none;
   border-right: none;
 }
 
+.banner {
+  margin-top: 48px;
+}
 
 .banner h1 {
-	font: normal 48px Georgia, "Times New Roman", Times, serif;
-	text-align: right;
+  font: normal 48px Georgia, "Times New Roman", Times, serif;
+  text-align: right;
   color: #272D32;
 }
 
 .main h2 {
-	font: 24px Tahoma, Geneva, sans-serif;
-	margin-bottom: 15px;
-	font-family: Tahoma, Geneva, sans-serif;
+  font: 24px Tahoma, Geneva, sans-serif;
+  font-family: Tahoma, Geneva, sans-serif;
+  background-image: url(images/underline.png);
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  padding-bottom: 7px;
+  margin-bottom: 15px;
 }
 .main p {
-	font: 14px Tahoma, Geneva, sans-serif;
-	color: #323A3F;
-	margin-bottom: 20px;
-	font-family: Tahoma, Geneva, sans-serif;
+  font: 14px Tahoma, Geneva, sans-serif;
+  color: #323A3F;
+  margin-bottom: 20px;
+  font-family: Tahoma, Geneva, sans-serif;
 }
 
 .announcement h2 {
-	font: italic bold normal 20px Georgia, "Times New Roman", Times, serif;
-	text-align: center;
-	color: #323A3F;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	margin-bottom: 18px;
+  font: italic bold normal 20px Georgia, "Times New Roman", Times, serif;
+  text-align: center;
+  color: #323A3F;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
 }
 .announcement ul {
-	font: 14px Tahoma, Geneva, sans-serif;
+  font: 14px Tahoma, Geneva, sans-serif;
 }
-
-/* add your styles here */
-
-
-
-
-
-
-
-
-
+.announcement li {
+  list-style-image: url(images/bullet.png);
+  //background-image: url(images/bullet.png);
+  //background-repeat: no-repeat;
+  //background-position: 0 4px;
+  //padding-left: 25px;
+  margin: 0 40px 10px 50px;
+}
