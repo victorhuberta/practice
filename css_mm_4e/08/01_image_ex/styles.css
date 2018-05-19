@@ -60,7 +60,25 @@ p {
 }
 /* add your styles below here */
 
+.apartment-grass {
+  margin: 15px 10px 5px 10px;
+  width: 222px;
+  float: right;
+}
 
+.apartment-grass__photo {
+  background-color: #ccc;
+  padding: 10px;
+  border: 1px solid #666;
+}
 
+.apartment-grass__caption {
+  font: bold 1em/normal Verdana, Arial, Helvetica, sans-serif;
+  color: #333;
+  background-image: linear-gradient(180deg, #e6f3ff, white);
+  text-align: center;
+  padding: 5px;
+  border: 1px dashed #666;
+}
 
 
