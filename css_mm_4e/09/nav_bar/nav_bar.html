@@ -41,18 +41,52 @@ body {
 	padding: 20px;
 }
 
+.nav-bar {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.nav-bar__item {
+  float: left;
+}
 
+.nav-link {
+  display: inline-block;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  color: #fff;
+  background-color: #13a4c0;
+  background-image: url(images/nav.png);
+  background-position: top left;
+  background-repeat: no-repeat;
+  padding: 8px;
+  padding-left: 30px;
+  width: 80px;
+}
+.nav-link:hover {
+  color: #000;
+  background-image: url(images/nav.png);
+  background-position: 0 50%;
+  background-color: #d3b4f0;
+}
+.nav-link--current {
+  color: #000;
+  background-image: url(images/nav.png);
+  background-position: 0 100%;
+  background-color: #fff;
+}
 
 </style>
 </head>
 <body>
-  <ul>
-    <li><a href="/index.html">Home</a></li>
-    <li><a href="/features/">Features</a></li>
-    <li><a href="/experts/">Experts</a></li>
-    <li><a href="/quiz/">Quiz</a></li>
-    <li><a href="/projects/">Projects</a></li>
-    <li><a href="/horoscopes/">Horoscopes</a></li>
+  <ul class="nav-bar">
+    <li class="nav-bar__item"><a class="nav-link" href="/index.html">Home</a></li>
+    <li class="nav-bar__item"><a class="nav-link" href="/features/">Features</a></li>
+    <li class="nav-bar__item"><a class="nav-link nav-link--current" href="/experts/">Experts</a></li>
+    <li class="nav-bar__item"><a class="nav-link" href="/quiz/">Quiz</a></li>
+    <li class="nav-bar__item"><a class="nav-link" href="/projects/">Projects</a></li>
+    <li class="nav-bar__item"><a class="nav-link" href="/horoscopes/">Horoscopes</a></li>
   </ul>
 </body>
 </html>
