@@ -51,6 +51,7 @@ header {
 	position: absolute;
 	z-index: 100;
 	left: 0;	
+    animation: grand-intro 3s;
 }
 header h1 {
 	font-size: 2.2em;
@@ -79,13 +80,39 @@ nav a {
 	text-shadow:
 		0px -1px 1px rgba(000,000,000,0.2),
 		0px 1px 0px rgba(255,255,255,0.3);
+    transition: transform .5s, background-color .1s ease-in .5s;
 }
 
 /* your styles here */
 
+nav a:hover {
+  background-color: red;
+  transform: scale(1.5);
+  animation: glow 1.5s 2 alternate;
+}
 
+@keyframes grand-intro {
+  0% {
+    left: 120%;
+    transform: rotate(0) scale(.5);
+  }
 
+  50% {
+    left: 0;
+    transform: rotate(-720deg) scale(.5);
+  }
 
+  100% {
+    transform: rotate(0) scale(1);
+  }
+}
 
+@keyframes glow {
+  0% {
+    box-shadow: inset 0px 0px 0px transparent;
+  }
 
-
+  100% {
+    box-shadow: inset 3px 3px 10px #C1F0F6, inset -3px -3px 10px #C1F0F6;
+  }
+}
