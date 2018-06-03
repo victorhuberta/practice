@@ -1,4 +1,0 @@
-[
-  "tests/test_app.py::test_list_images",
-  "tests/test_app.py::test_posted_images_get_saved"
-]
