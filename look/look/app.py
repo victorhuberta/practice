@@ -1,15 +1,17 @@
+import os
 import falcon
 
-from .images import ImagesResource, ImageStore
+import look.images as images
 
 
 def create_app(image_store):
     app = application = falcon.API()
-    images = ImagesResource(image_store)
-    app.add_route('/images', images)
+    app.add_route('/images', images.Collection(image_store))
+    app.add_route('/images/{name}', images.Item(image_store))
     return app
     
     
 def get_app():
-    image_store = ImageStore('.')
+    storage_path = os.environ.get('LOOK_STORAGE_PATH', '.')
+    image_store = images.Store(storage_path)
     return create_app(image_store)
