@@ -128,3 +128,28 @@ footer a {
 	color: white;	
 }
 /* add tutorial styles below here */
+
+nav ul, header h1, footer p, .content {
+  min-width: 800px;
+  max-width: 1096px;
+  margin: 0 auto;
+}
+
+.sidebar1 {
+  float: left;
+  width: 20%;
+  padding: 0 20px 0 10px;
+}
+
+.main {
+  overflow: hidden;
+  padding: 0 20px;
+  border-left: dashed 1px #000;
+  border-right: dashed 1px #000;
+}
+
+.sidebar2 {
+  float: right;
+  width: 20%;
+  padding: 0 10px 0 20px;
+}
