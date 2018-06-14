@@ -4,10 +4,11 @@ use std::error::Error;
 use std::fmt;
 use std::time::{SystemTime, UNIX_EPOCH, Duration};
 
-type Chain = Vec<Block>;
+type LedgerRepr = Vec<Block>;
 type Proof = usize;
 type Hash = [u8; 32];
 
+#[derive(Debug)]
 pub struct Block {
     index: usize,
     timestamp: Duration,
@@ -16,6 +17,7 @@ pub struct Block {
     previous_hash: Hash
 }
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct Transaction {
     sender: String,
     recipient: String,
@@ -23,56 +25,72 @@ pub struct Transaction {
 }
 
 impl Transaction {
-    fn new(sender: String, recipient: String, amount: usize) -> Transaction {
+    pub fn new(sender: String, recipient: String, amount: usize) -> Transaction {
         Transaction { sender, recipient, amount }
     }
 }
 
 #[derive(Debug)]
-pub struct ChainError;
+pub struct BlockError;
 
-impl fmt::Display for ChainError {
+impl fmt::Display for BlockError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Failure in manipulating chain")
+        write!(f, "Cannot add block")
     }
 }
 
-impl Error for ChainError {
+impl Error for BlockError {
     fn description(&self) -> &str {
-        "Failure in manipulating chain"
+        "Cannot add BLOCK"
+    }
+}
+
+#[derive(Debug)]
+pub struct TransactionError;
+
+impl fmt::Display for TransactionError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Cannot add transaction")
+    }
+}
+
+impl Error for TransactionError {
+    fn description(&self) -> &str {
+        "Cannot add transaction"
     }
 }
 
 pub trait DistributedLedger {
-    fn add_block(&mut self, block: Block) -> Result<&Chain, ChainError>;
-    fn add_transaction(&mut self, tx: Transaction) -> Result<usize, ChainError>;
+    fn add_block(&mut self, block: Block) -> Result<&LedgerRepr, BlockError>;
+    fn add_transaction(&mut self, tx: Transaction) -> Result<usize, TransactionError>;
     fn last_block(&self) -> Option<&Block>;
 }
 
-struct StupidLedger {
-    content: Chain,
+#[derive(Debug)]
+pub struct StupidLedger {
+    chain: LedgerRepr,
     block_txs: Vec<Transaction>
 }
 
 impl StupidLedger {
-    fn new(content: Chain) -> StupidLedger {
-        StupidLedger { content, block_txs: Vec::new() }
+    pub fn new(chain: LedgerRepr) -> StupidLedger {
+        StupidLedger { chain, block_txs: Vec::new() }
     }
 }
 
 impl DistributedLedger for StupidLedger {
-    fn add_block(&mut self, block: Block) -> Result<&Chain, ChainError> {
-        self.content.push(block);
-        Ok(&self.content)
+    fn add_block(&mut self, block: Block) -> Result<&LedgerRepr, BlockError> {
+        self.chain.push(block);
+        Ok(&self.chain)
     }
 
-    fn add_transaction(&mut self, tx: Transaction) -> Result<usize, ChainError> {
+    fn add_transaction(&mut self, tx: Transaction) -> Result<usize, TransactionError> {
         self.block_txs.push(tx);
-        Ok(self.last_block().unwrap().index + 1)
+        Ok(self.chain.len() + 1)
     }
 
     fn last_block(&self) -> Option<&Block> {
-        self.content.last()
+        self.chain.last()
     }
 }
 
@@ -83,12 +101,11 @@ mod tests {
 
     #[test]
     fn test_add_transaction() {
-        let sender = "0x0001";
-        let recipient = "0x0002";
+        let sender = String::from("0x0001");
+        let recipient = String::from("0x0002");
         let amount = 10000;
         let tx = Transaction::new(sender, recipient, amount);
-        let stupid_chain = StupidLedger::new(Vec::new());
-        stupid_chain.add_transaction(tx);
-        assert_eq!(stupid_chain.last_block().unwrap().transactions[0], tx);
+        let mut stupid_chain = StupidLedger::new(Vec::new());
+        assert_eq!(stupid_chain.add_transaction(tx.clone()).unwrap(), 1);
     }
 }
