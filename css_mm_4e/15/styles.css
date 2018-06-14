@@ -133,24 +133,27 @@ footer a {
    constrained inside a 1200 pixel, centered box */
 /*.pageWrapper {
 	max-width: 1200px;
-	margin: 0 auto;	
+	margin: 0 auto;
 }*/
 
-
+.column-wrapper {
+  float: left;
+  width: 80%;
+}
 .sidebar1 {
   float: left;
-  width: 20%;
+  width: 25%;
   padding: 0 20px 0 10px;
 }
 .main {
-  float: left;
-  width: 60%;
+  float: right;
+  width: 75%;
   padding: 0 20px;
   border-left: dashed 1px rgb(153,153,153);
   border-right: dashed 1px rgb(153,153,153);
 }
 .sidebar2 {
-  float: right;
+  float: left;
   width: 20%; 
   padding: 0 10px 0 20px;
 }
@@ -162,6 +165,90 @@ nav ul, header h1, footer p, .contentWrapper {
   margin: 0 auto; 
 }
 
+img {
+  max-width: 100%;
+}
 
+.h-width-half {
+  max-width: 50%;
+}
 
+.h-float-right {
+  float: right;
+  padding: 0 0 10px 15px;
+}
 
+.h-float-left {
+  float: left;
+  padding: 0 15px 10px 0;
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .sidebar2 {
+    float: none;
+    width: auto;
+    clear: both;
+    border: 1px solid #000;
+    padding-top: 10px;
+  }
+
+  .column-wrapper {
+    width: auto;
+  }
+
+  .main {
+    border-right: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .column-wrapper, .main, .sidebar1, .sidebar2 {
+    float: none;
+    width: auto;
+  }
+
+  .main {
+    border: none;
+  }
+
+  .sidebar1, .sidebar2 {
+    border-top: 1px solid #000;
+    margin-top: 25px;
+    padding-top: 10px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .main h2 {
+    font-size: 1.3rem;
+  }
+
+  .main h3 {
+    font-size: 1.2rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+  }
+
+  aside p {
+    font-size: 1rem;
+  }
+
+  nav {
+    text-align: center;
+  }
+
+  nav li {
+    float: none;
+    display: inline-block;
+  }
+
+  nav a {
+    float: none;
+    border: none;
+    display: inline-block;
+  }
+}
