@@ -1,28 +1,88 @@
+#[macro_use]
 extern crate objecthash;
 
 use std::error::Error;
 use std::fmt;
+use std::str;
 use std::time::{SystemTime, UNIX_EPOCH, Duration};
-use objecthash::{ObjectHash};
+use objecthash::{ObjectHash, ObjectHasher};
 
 type LedgerRepr = Vec<Block>;
 type Proof = usize;
-type Hash = [u8; 32];
+type Hash = Vec<u8>;
+
+#[derive(Debug)]
+pub struct Timestamp(Duration);
+
+impl ObjectHash for Timestamp {
+    #[inline]
+    fn objecthash<H: ObjectHasher>(&self, hasher: &mut H) {
+        objecthash_struct!(
+            hasher,
+            "value" => &(self.0.as_secs()*(1e9 as u64) + self.0.subsec_nanos() as u64)
+        )
+    }
+}
+
+#[derive(Debug)]
+pub struct HashOption(Option<Hash>);
+
+impl ObjectHash for HashOption {
+    #[inline]
+    fn objecthash<H: ObjectHasher>(&self, hasher: &mut H) {
+        objecthash_struct!(
+            hasher,
+            "value" => match self.0 {
+                Some(v) => &v,
+                None => &vec![]
+            }
+        )
+    }
+}
 
 #[derive(Debug)]
 pub struct Block {
     index: usize,
-    timestamp: Duration,
+    timestamp: Timestamp,
     transactions: Vec<Transaction>,
     proof: Proof,
-    previous_hash: Hash
+    previous_hash: HashOption
 }
 
 impl Block {
-    pub fn new(index: usize, timestamp: Duration, transactions: Vec<Transaction>,
-        proof: Proof, previous_hash: Hash) -> Block
+    pub fn new(index: usize, timestamp: Timestamp, transactions: Vec<Transaction>,
+        proof: Proof, previous_hash: HashOption) -> Block
     {
         Block { index, timestamp, transactions, proof, previous_hash }
+    }
+}
+
+impl ObjectHash for Block {
+    #[inline]
+    fn objecthash<H: ObjectHasher>(&self, hasher: &mut H) {
+        objecthash_struct!(
+            hasher,
+            "index" => &self.index,
+            "timestamp" => &self.timestamp,
+            "transactions" => &self.transactions,
+            "proof" => &self.proof,
+            "previous_hash" => &self.previous_hash
+        )
+    }
+}
+
+#[derive(Debug)]
+pub struct BlockError;
+
+impl fmt::Display for BlockError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Cannot add block")
+    }
+}
+
+impl Error for BlockError {
+    fn description(&self) -> &str {
+        "Cannot add BLOCK"
     }
 }
 
@@ -39,18 +99,15 @@ impl Transaction {
     }
 }
 
-#[derive(Debug)]
-pub struct BlockError;
-
-impl fmt::Display for BlockError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Cannot add block")
-    }
-}
-
-impl Error for BlockError {
-    fn description(&self) -> &str {
-        "Cannot add BLOCK"
+impl ObjectHash for Transaction {
+    #[inline]
+    fn objecthash<H: ObjectHasher>(&self, hasher: &mut H) {
+        objecthash_struct!(
+            hasher,
+            "sender" => &self.sender,
+            "recipient" => &self.recipient,
+            "amount" => &self.amount
+        )
     }
 }
 
@@ -70,10 +127,10 @@ impl Error for TransactionError {
 }
 
 pub trait DistributedLedger {
-    fn new_block(&mut self, timestamp: Duration, proof: Proof) -> Result<&LedgerRepr, BlockError>;
+    fn new_block(&mut self, timestamp: Timestamp, proof: Proof) -> Result<&LedgerRepr, BlockError>;
     fn add_transaction(&mut self, tx: Transaction) -> Result<usize, TransactionError>;
     fn last_block(&self) -> Option<&Block>;
-    fn hash<T: ObjectHash>(obj: &T) -> [u8; 32];
+    fn hash<T: ObjectHash>(obj: &T) -> Hash;
 }
 
 #[derive(Debug)]
@@ -89,16 +146,16 @@ impl StupidLedger {
 }
 
 impl DistributedLedger for StupidLedger {
-    fn new_block(&mut self, timestamp: Duration, proof: Proof) -> Result<&LedgerRepr, BlockError> {
+    fn new_block(&mut self, timestamp: Timestamp, proof: Proof) -> Result<&LedgerRepr, BlockError> {
         let block = Block::new(
             self.chain.len() + 1,
             timestamp,
-            self.block_txs,
+            self.block_txs.to_vec(),
             proof,
             if self.chain.len() == 0 {
-                [0; 32]
+                HashOption(Some(vec![0; 32]))
             } else {
-                DistributedLedger::hash(self.last_block().unwrap())
+                HashOption(Some(Self::hash(self.last_block().unwrap())))
             }
         );
         self.block_txs.clear();
@@ -115,7 +172,8 @@ impl DistributedLedger for StupidLedger {
         self.chain.last()
     }
 
-    fn hash<T: ObjectHash>(obj: &T) -> [u8; 32] {
+    fn hash<T: ObjectHash>(obj: &T) -> Hash {
+        vec![]
     }
 }
 
