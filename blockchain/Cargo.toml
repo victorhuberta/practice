@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["Victor Huberta <victorhuberta@gmail.com>"]
 
 [dependencies]
-sha3= "0.7.3"
+ring = "0.12.1"
+objecthash = "0.4.1"

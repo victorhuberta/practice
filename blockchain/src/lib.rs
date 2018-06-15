@@ -1,8 +1,9 @@
-extern crate sha3;
+extern crate objecthash;
 
 use std::error::Error;
 use std::fmt;
 use std::time::{SystemTime, UNIX_EPOCH, Duration};
+use objecthash::{ObjectHash};
 
 type LedgerRepr = Vec<Block>;
 type Proof = usize;
@@ -15,6 +16,14 @@ pub struct Block {
     transactions: Vec<Transaction>,
     proof: Proof,
     previous_hash: Hash
+}
+
+impl Block {
+    pub fn new(index: usize, timestamp: Duration, transactions: Vec<Transaction>,
+        proof: Proof, previous_hash: Hash) -> Block
+    {
+        Block { index, timestamp, transactions, proof, previous_hash }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -61,9 +70,10 @@ impl Error for TransactionError {
 }
 
 pub trait DistributedLedger {
-    fn add_block(&mut self, block: Block) -> Result<&LedgerRepr, BlockError>;
+    fn new_block(&mut self, timestamp: Duration, proof: Proof) -> Result<&LedgerRepr, BlockError>;
     fn add_transaction(&mut self, tx: Transaction) -> Result<usize, TransactionError>;
     fn last_block(&self) -> Option<&Block>;
+    fn hash<T: ObjectHash>(obj: &T) -> [u8; 32];
 }
 
 #[derive(Debug)]
@@ -79,7 +89,19 @@ impl StupidLedger {
 }
 
 impl DistributedLedger for StupidLedger {
-    fn add_block(&mut self, block: Block) -> Result<&LedgerRepr, BlockError> {
+    fn new_block(&mut self, timestamp: Duration, proof: Proof) -> Result<&LedgerRepr, BlockError> {
+        let block = Block::new(
+            self.chain.len() + 1,
+            timestamp,
+            self.block_txs,
+            proof,
+            if self.chain.len() == 0 {
+                [0; 32]
+            } else {
+                DistributedLedger::hash(self.last_block().unwrap())
+            }
+        );
+        self.block_txs.clear();
         self.chain.push(block);
         Ok(&self.chain)
     }
@@ -91,6 +113,9 @@ impl DistributedLedger for StupidLedger {
 
     fn last_block(&self) -> Option<&Block> {
         self.chain.last()
+    }
+
+    fn hash<T: ObjectHash>(obj: &T) -> [u8; 32] {
     }
 }
 
@@ -107,5 +132,18 @@ mod tests {
         let tx = Transaction::new(sender, recipient, amount);
         let mut stupid_chain = StupidLedger::new(Vec::new());
         assert_eq!(stupid_chain.add_transaction(tx.clone()).unwrap(), 1);
+    }
+
+    #[test]
+    fn test_new_block() {
+        let sender = String::from("0x0001");
+        let recipient = String::from("0x0002");
+        let amount = 10000;
+        let tx = Transaction::new(sender, recipient, amount);
+        let mut stupid_chain = StupidLedger::new(Vec::new());
+        stupid_chain.add_transaction(tx.clone());
+
+        assert_eq!(stupid_chain.new_block(12345, 1000).unwrap()[0],
+            Block::new(1, 12345, vec![tx.clone()], 1000, None));
     }
 }
