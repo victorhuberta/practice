@@ -19,6 +19,8 @@ pub trait DistributedLedger<B: Block, T: Transaction> {
     fn add_transaction(&mut self, tx: T) -> Result<usize, TransactionError>;
     fn last_block(&self) -> Option<&B>;
     fn hash(obj: &B) -> Vec<u8>;
+    fn find_proof(&self, last_proof: Self::Proof) -> Self::Proof;
+    fn is_valid_proof(last_block_hash: Vec<u8>, last_proof: Self::Proof, proof: Self::Proof) -> bool;
 }
 
 pub trait Block {

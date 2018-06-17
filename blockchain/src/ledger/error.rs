@@ -6,7 +6,7 @@ use std::error::Error;
 use std::fmt;
 
 /// Error type for Block-related failures.
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct BlockError;
 
 impl fmt::Display for BlockError {
@@ -22,7 +22,7 @@ impl Error for BlockError {
 }
 
 /// Error type for Transaction-related failures.
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TransactionError;
 
 impl fmt::Display for TransactionError {

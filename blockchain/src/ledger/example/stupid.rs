@@ -5,8 +5,9 @@
 use objecthash;
 use objecthash::{ObjectHash, ObjectHasher};
 use ledger::*;
+use ledger::util::Hex;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StupidLedger {
     chain: Vec<StupidBlock>,
     block_txs: Vec<StupidTransaction>
@@ -15,6 +16,10 @@ pub struct StupidLedger {
 impl StupidLedger {
     pub fn new(chain: Vec<StupidBlock>) -> StupidLedger {
         StupidLedger { chain, block_txs: Vec::new() }
+    }
+
+    pub fn chain(&self) -> &Vec<StupidBlock> {
+        &self.chain
     }
 }
 
@@ -51,10 +56,29 @@ impl DistributedLedger<StupidBlock, StupidTransaction> for StupidLedger {
     fn hash(obj: &StupidBlock) -> Vec<u8> {
         objecthash::digest(obj).as_ref().to_vec()
     }
+
+    fn find_proof(&self, last_proof: Self::Proof) -> Self::Proof {
+        let last_block_hash = if self.chain.len() == 0 {
+            vec![0; 32]
+        } else {
+            Self::hash(self.last_block().unwrap())
+        };
+        let mut proof = 0;
+        while ! Self::is_valid_proof(last_block_hash.to_vec(), last_proof, proof) {
+            proof += 1;
+        }
+        proof
+    }
+
+    fn is_valid_proof(last_block_hash: Vec<u8>, last_proof: Self::Proof, proof: Self::Proof) -> bool {
+        let last_block_hash = Hex::from_bytes(&last_block_hash[..]);
+        let s = format!("{}{}{}", last_block_hash, last_proof, proof);
+        objecthash::digest(&s).as_ref()[..4] == [0, 0, 0, 0]
+    }
 }
 
 /// Defines a stupid block of transactions in the blockchain.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct StupidBlock {
     index: usize,
     timestamp: Timestamp,
@@ -93,7 +117,7 @@ impl Block for StupidBlock {
 }
 
 /// Defines a stupid transaction in the blockchain.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct StupidTransaction {
     sender: String,
     recipient: String,
@@ -126,7 +150,7 @@ impl Transaction for StupidTransaction {
 }
 
 /// Newtype for std::time::Duration.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Timestamp(Duration);
 
 impl Timestamp {
