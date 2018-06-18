@@ -3,6 +3,7 @@
 //! Contains all utility functions.
 
 use std::fmt::Write;
+use std::time::{SystemTime, UNIX_EPOCH, Duration};
 
 /// Performs hex-related manipulations.
 pub struct Hex;
@@ -37,3 +38,20 @@ mod hex_tests {
         assert_eq!(&Hex::from_bytes(&bytes)[..], "ff12a3");
     }
 }
+
+/// Newtype for std::time::Duration.
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+pub struct Timestamp(pub Duration);
+
+impl Timestamp {
+    pub fn new(value: Duration) -> Timestamp {
+        Timestamp(value)
+    }
+
+    pub fn current_nanos() -> Timestamp {
+        let now = SystemTime::now();
+        let since_epoch = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
+        Self::new(since_epoch)
+    }
+}
+
