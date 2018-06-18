@@ -6,7 +6,7 @@ pub mod error;
 pub mod util;
 pub mod example;
 
-use std::time::Duration;
+use std::time::{SystemTime, UNIX_EPOCH, Duration};
 use self::error::*;
 
 pub trait DistributedLedger<B: Block, T: Transaction> {
@@ -15,7 +15,7 @@ pub trait DistributedLedger<B: Block, T: Transaction> {
     /// Proof used for block validations
     type Proof;
 
-    fn new_block(&mut self, timestamp: Duration, proof: Self::Proof) -> Result<&Self::LedgerRepr, BlockError>;
+    fn new_block(&mut self, timestamp: Timestamp, proof: Self::Proof) -> Result<&Self::LedgerRepr, BlockError>;
     fn add_transaction(&mut self, tx: T) -> Result<usize, TransactionError>;
     fn last_block(&self) -> Option<&B>;
     fn hash(obj: &B) -> Vec<u8>;
@@ -30,3 +30,20 @@ pub trait Block {
 pub trait Transaction {
     fn is_valid(&self) -> bool;
 }
+
+/// Newtype for std::time::Duration.
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+pub struct Timestamp(Duration);
+
+impl Timestamp {
+    pub fn new(value: Duration) -> Timestamp {
+        Timestamp(value)
+    }
+
+    pub fn current_nanos() -> Timestamp {
+        let now = SystemTime::now();
+        let since_epoch = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
+        Self::new(since_epoch)
+    }
+}
+

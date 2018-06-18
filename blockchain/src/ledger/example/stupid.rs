@@ -9,7 +9,7 @@ use ledger::util::Hex;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StupidLedger {
-    chain: Vec<StupidBlock>,
+    pub chain: Vec<StupidBlock>,
     block_txs: Vec<StupidTransaction>
 }
 
@@ -17,26 +17,22 @@ impl StupidLedger {
     pub fn new(chain: Vec<StupidBlock>) -> StupidLedger {
         StupidLedger { chain, block_txs: Vec::new() }
     }
-
-    pub fn chain(&self) -> &Vec<StupidBlock> {
-        &self.chain
-    }
 }
 
 impl DistributedLedger<StupidBlock, StupidTransaction> for StupidLedger {
     type LedgerRepr = Vec<StupidBlock>;
     type Proof = usize;
 
-    fn new_block(&mut self, timestamp: Duration, proof: Self::Proof) -> Result<&Self::LedgerRepr, BlockError> {
+    fn new_block(&mut self, timestamp: Timestamp, proof: Self::Proof) -> Result<&Self::LedgerRepr, BlockError> {
         let block = StupidBlock::new(
             self.chain.len() + 1,
-            Timestamp::new(timestamp),
+            timestamp,
             self.block_txs.to_vec(),
             proof,
-            if self.chain.len() == 0 {
-                vec![0; 32]
+            if let Some(last_block) = self.last_block() {
+                Self::hash(last_block)
             } else {
-                Self::hash(self.last_block().unwrap())
+                vec![0; 32]
             }
         );
         self.block_txs.clear();
@@ -58,10 +54,10 @@ impl DistributedLedger<StupidBlock, StupidTransaction> for StupidLedger {
     }
 
     fn find_proof(&self, last_proof: Self::Proof) -> Self::Proof {
-        let last_block_hash = if self.chain.len() == 0 {
-            vec![0; 32]
+        let last_block_hash = if let Some(last_block) = self.last_block() {
+            Self::hash(last_block)
         } else {
-            Self::hash(self.last_block().unwrap())
+            vec![0; 32]
         };
         let mut proof = 0;
         while ! Self::is_valid_proof(last_block_hash.to_vec(), last_proof, proof) {
@@ -83,7 +79,7 @@ pub struct StupidBlock {
     index: usize,
     timestamp: Timestamp,
     transactions: Vec<StupidTransaction>,
-    proof: usize,
+    pub proof: usize,
     previous_hash: Vec<u8>
 }
 
@@ -149,16 +145,6 @@ impl Transaction for StupidTransaction {
     }
 }
 
-/// Newtype for std::time::Duration.
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct Timestamp(Duration);
-
-impl Timestamp {
-    pub fn new(value: Duration) -> Timestamp {
-        Timestamp(value)
-    }
-}
-
 /// Makes Timestamp hashable.
 impl ObjectHash for Timestamp {
     #[inline]
@@ -188,9 +174,8 @@ mod tests {
         let mut stupid_chain = StupidLedger::new(Vec::new());
         stupid_chain.add_transaction(tx.clone()).expect("bad transaction");
 
-        let duration = Duration::new(12345, 0);
-        let timestamp = Timestamp::new(duration.clone());
-        assert_eq!(stupid_chain.new_block(duration, 1000).unwrap()[0],
+        let timestamp = Timestamp::new(Duration::new(12345, 0));
+        assert_eq!(stupid_chain.new_block(timestamp.clone(), 1000).unwrap()[0],
             StupidBlock::new(1, timestamp, vec![tx.clone()], 1000, vec![0; 32]));
     }
 
