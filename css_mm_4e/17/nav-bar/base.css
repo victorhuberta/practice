@@ -448,6 +448,9 @@ body {
   margin: 0 auto;
   padding: 10px 0;
   padding: 0 20px;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .banner a {
@@ -479,4 +482,5 @@ body {
 .logo {
   font-size: 4rem;
   margin: 0;
+  margin-right: auto;
 }
