@@ -36,6 +36,7 @@ button {
   border-radius: 4px;
   padding: 1rem;
   text-transform: uppercase;
+  cursor: pointer;
 }
 
 .primary-btn {
@@ -75,6 +76,12 @@ button {
   align-items: center;
   font-size: 1.6rem;
   width: 120px;
+}
+.nav-link--visited {
+  text-decoration: underline;
+}
+.nav-link:hover {
+  text-decoration: underline;
 }
 
 .site-content {
