@@ -1,0 +1,113 @@
+html {
+  font-family: Roboto, sans-serif;
+  font-size: 10px;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+}
+
+h1 {
+  font-size: 3.2rem;
+}
+
+h2 {
+  font-size: 2.4rem;
+}
+
+h3 {
+  font-size: 1.6rem;
+}
+
+h4, p, a, button {
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, a {
+  color: #1976d2;
+  text-transform: uppercase;
+}
+
+button {
+  border: none;
+  border-radius: 4px;
+  padding: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.accent-btn {
+  background-color: #fff;
+  color: #1976d2;
+  border: 1px solid #1976d2;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  box-shadow: 0 1px 15px #ccca;
+}
+
+.site-logo {
+  background: url("logo.jpg") center/contain no-repeat;
+  width: 273.188px;
+  height: 82.733px;
+  margin-right: auto;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.6rem;
+  width: 120px;
+}
+.nav-link--visited {
+  text-decoration: underline;
+}
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.site-content {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.feature-area {
+  flex: 1 1 300px;
+  margin: 3rem;
+}
+
+.feature-area-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feature-area-heading {
+  font-size: 2.4rem;
+  margin: 0;
+}
+
+@media (max-width: 513px) {
+  .site-header {
+    padding-bottom: 1rem;
+  }
+}
