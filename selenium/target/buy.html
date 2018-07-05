@@ -2,15 +2,18 @@
 <html>
 <head>
   <title>Buy</title>
-  <link href="assets/normalize.css" rel="stylesheet" type="text/css">
-  <link href="assets/styles.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+  <link href="assets/css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/image-picker.css" rel="stylesheet" type="text/css">
+  <link href="assets/css/styles.css" rel="stylesheet" type="text/css">
 </head>
 <body>
   <header class="site-header">
     <div class="site-logo" alt="Lawencon Shop Logo"></div>
     <nav class="site-nav">
       <a href="buy.html" class="nav-link js-buy-link">Buy</a>
-      <a href="about.html" class="nav-link js-about-link">About</a>
+      <a href="help.html" class="nav-link js-help-link">Help</a>
     </nav>
   </header>
 
@@ -19,27 +22,41 @@
       <header class="feature-area-header">
         <h1 class="feature-area-heading">Shop</h1>
         <span class="feature-area-actions">
-          <button class="primary-btn add-to-cart">Add to cart</button>
+          <button class="primary-btn js-add-to-cart">Add to cart</button>
         </span>
       </header>
 
       <article class="feature-area-content">
-        <div class="js-shop-item"></div>
+        <select multiple="multiple" class="image-picker show-html">
+          <option data-img-src="assets/images/01.jpeg" data-img-alt="Product 1" value="1">Product 1</option>
+          <option data-img-src="assets/images/02.png" data-img-alt="Product 2" value="2">Product 2</option>
+          <option data-img-src="assets/images/03.png" data-img-alt="Product 3" value="3">Product 3</option>
+          <option data-img-src="assets/images/04.png" data-img-alt="Product 4" value="4">Product 4</option>
+          <option data-img-src="assets/images/05.png" data-img-alt="Product 5" value="5">Product 5</option>
+          <option data-img-src="assets/images/06.jpg" data-img-alt="Product 6" value="6">Product 6</option>
+          <option data-img-src="assets/images/07.jpg" data-img-alt="Product 7" value="7">Product 7</option>
+        </select>
       </article>
     </section>
 
-    <section class="feature-area">
+    <section class="feature-area js-cart">
       <header class="feature-area-header">
         <h1 class="feature-area-heading">Cart</h1>
         <span class="feature-area-actions">
-          <button class="accent-btn remove-from-cart">Remove from cart</button>
+          <button class="accent-btn remove-from-cart js-remove-from-cart">Remove from cart</button>
+          <button class="primary-btn js-checkout">Checkout</button>
         </span>
       </header>
 
       <article class="feature-area-content">
+        <select multiple="multiple" class="image-picker show-html">
+        </select>
       </article>
     </section>
   </article>
 
+  <script src="assets/js/jquery-3.3.1.min.js"></script>
+  <script src="assets/js/image-picker.min.js"></script>
+  <script src="assets/js/script.js"></script>
 </body>
 </html>

@@ -39,9 +39,26 @@ button {
   cursor: pointer;
 }
 
+input, textarea {
+  font-family: Roboto, sans-serif;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  padding: .5rem;
+  margin: 1rem .5rem;
+  border: 1px solid #c7c7c7;
+  border-radius: 4px;
+  height: 30px;
+}
+
+textarea {
+  height: 100px;
+  resize: none;
+}
+
 .primary-btn {
   background-color: #1976d2;
   color: #fff;
+  border: 1px solid #1976d2;
 }
 
 .accent-btn {
@@ -58,7 +75,7 @@ button {
 }
 
 .site-logo {
-  background: url("logo.jpg") center/contain no-repeat;
+  background: url("../images/logo.jpg") center/contain no-repeat;
   width: 273.188px;
   height: 82.733px;
   margin-right: auto;
@@ -106,6 +123,30 @@ button {
   margin: 0;
 }
 
+.feature-area-content {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 2rem;
+}
+
+.remove-from-cart {
+  margin-right: .5rem;
+}
+
+.main-msg-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3.2rem;
+  color: #1976d2;
+}
+
+/* Image Picker Overrides */
+.image_picker_image {
+  width: 95px;
+}
+
+/* Media Queries */
 @media (max-width: 513px) {
   .site-header {
     padding-bottom: 1rem;
