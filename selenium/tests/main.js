@@ -6,7 +6,7 @@ const assert = require('assert');
 const webdriver = require('selenium-webdriver');
 const By = webdriver.By;
 
-describe('Google Search', () => {
+describe('Lawencon Card Shop', () => {
   let driver;
 
   before(() => {
