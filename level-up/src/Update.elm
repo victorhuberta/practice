@@ -1,7 +1,7 @@
 module Update exposing (..)
 
 
-import Models exposing (Model)
+import Models exposing (Model, Player)
 import Msgs exposing (Msg(..))
 
 
@@ -9,4 +9,4 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     NoOp ->
-      ("Doing nothing.", Cmd.none)
+      ({ players = [ Player "" "" 1 ] }, Cmd.none)
