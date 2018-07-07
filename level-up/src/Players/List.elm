@@ -2,17 +2,35 @@ module Players.List exposing (..)
 
 
 import Html exposing (..)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, href)
+import RemoteData exposing (WebData)
 import Models exposing (Player)
 import Msgs exposing (Msg)
+import Routing
 
 
-view : List Player -> Html Msg
+view : WebData (List Player) -> Html Msg
 view players =
   div []
     [ header
-    , list players
+    , maybeList players
     ]
+
+
+maybeList : WebData (List Player) -> Html Msg
+maybeList response =
+  case response of
+    RemoteData.NotAsked ->
+      text ""
+
+    RemoteData.Loading ->
+      text "Loading..."
+
+    RemoteData.Success players ->
+      list players
+
+    RemoteData.Failure error ->
+      text (toString error)
 
 
 header : Html Msg
@@ -44,5 +62,17 @@ playerRow player =
     [ td [] [ text player.id ]
     , td [] [ text player.name ]
     , td [] [ text (toString player.level) ]
-    , td [] []
+    , td []
+        [ editBtn player
+        ]
+    ]
+
+
+editBtn : Player -> Html Msg
+editBtn player =
+  a [ class "btn regular"
+    , href (Routing.playerPath player.id)
+    ]
+    [ i [ class "fa fa-pencil mr1" ] []
+    , text "Edit"
     ]
